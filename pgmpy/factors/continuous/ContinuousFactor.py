@@ -4,14 +4,19 @@ from pgmpy.factors.base import BaseFactor
 
 import numpy as np
 import scipy.integrate as integrate
-
+from pgmpy.factors.distributions import ContinuousDistribution
 
 class ContinuousFactor(BaseFactor):
     """
     Base class for factors representing various multivariate
     representations.
+
+    for variable elimination:
+    We need to implement marginalize,reduction,normalize
+
+
     """
-    def __init__(self, variables, pdf):
+    def __init__(self, variables, distribution):
         """
         Parameters
         ----------
@@ -26,10 +31,12 @@ class ContinuousFactor(BaseFactor):
         >>> import numpy as np
         >>> from scipy.special import beta
         >>> from pgmpy.factors.continuous import ContinuousFactor
+        >>> from pgmpy.factors.distributions import CustomDistribution
         # Two variable drichlet ditribution with alpha = (1,2)
-        >>> def drichlet_pdf(x, y):
+        >>> def dirichlet_pdf(x, y):
         ...     return (np.power(x, 1) * np.power(y, 2)) / beta(x, y)
-        >>> dirichlet_factor = ContinuousFactor(['x', 'y'], drichlet_pdf)
+        >>> dirichlet_dist = CustomDistribution(variables=['x', 'y'],distribution=dirichlet_pdf)
+        >>> dirichlet_factor = ContinuousFactor(['x', 'y'], dirichlet_dist)
         >>> dirichlet_factor.scope()
         ['x', 'y']
         >>> dirichlet_factor.assignemnt(5,6)
@@ -43,14 +50,13 @@ class ContinuousFactor(BaseFactor):
             raise ValueError("Variable names cannot be same.")
 
         self.variables = list(variables)
-        self._pdf = pdf
+        self.distribution = distribution
 
-    @property
     def pdf(self):
         """
         Returns the pdf of the ContinuousFactor.
         """
-        return self._pdf
+        return self.distribution.get_pdf()
 
     def scope(self):
         """
@@ -116,7 +122,8 @@ class ContinuousFactor(BaseFactor):
         """
         return ContinuousFactor(self.scope(), self.pdf)
 
-    def discretize(self, method, *args, **kwargs):
+    #SPENCER TODO: finish this
+    def discretize(self, method, *args, **kwargs): 
         """
         Discretizes the continuous distribution into discrete
         probability masses using various methods.
@@ -147,6 +154,7 @@ class ContinuousFactor(BaseFactor):
         """
         return method(self, *args, **kwargs).get_discrete_values()
 
+    #SPENCER TODO: finish this
     def reduce(self, values, inplace=True):
         """
         Reduces the factor to the context of the given variable values.
@@ -221,6 +229,7 @@ class ContinuousFactor(BaseFactor):
         if not inplace:
             return phi
 
+    #SPENCER TODO: finish this
     def marginalize(self, variables, inplace=True):
         """
         Maximizes the factor with respect to the given variables.
@@ -286,7 +295,7 @@ class ContinuousFactor(BaseFactor):
 
         if not inplace:
             return phi
-
+    #SPENCER TODO: finish this
     def normalize(self, inplace=True):
         """
         Normalizes the pdf of the continuous factor so that it integrates to
@@ -326,7 +335,7 @@ class ContinuousFactor(BaseFactor):
 
         if not inplace:
             return phi
-
+    #SPENCER TODO: finish this
     def _operate(self, other, operation, inplace=True):
         """
         Gives the ContinuousFactor operation (product or divide) with
@@ -377,7 +386,7 @@ class ContinuousFactor(BaseFactor):
 
         if not inplace:
             return phi
-
+    #SPENCER TODO: finish this
     def product(self, other, inplace=True):
         """
         Gives the ContinuousFactor product with the other factor.
@@ -412,6 +421,7 @@ class ContinuousFactor(BaseFactor):
         """
         return self._operate(other, 'product', inplace)
 
+    #SPENCER TODO: finish this
     def divide(self, other, inplace=True):
         """
         Gives the ContinuousFactor divide with the other factor.

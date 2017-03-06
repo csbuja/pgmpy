@@ -47,7 +47,7 @@ class LinBujaBayesianModel(BayesianModel):
 
     #not implemented
     def predict(self,data):
-                """
+        """
         Predicts states of all the missing variables.
 
         Parameters
@@ -114,7 +114,7 @@ class LinBujaBayesianModel(BayesianModel):
         >>> student.add_cpds(grades_cpd)
         """
         for cpd in cpds:
-            if not isinstance(cpd, TabularCPD) && not isinstance(cpd,ContinuousFactor):
+            if not isinstance(cpd, TabularCPD) and not isinstance(cpd,ContinuousFactor):
                 raise ValueError('Only TabularCPD or ContinuousFactor can be added.')
 
             if set(cpd.variables) - set(cpd.variables).intersection(

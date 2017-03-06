@@ -30,7 +30,7 @@ class BaseDistribution(object):
 
     @abstractmethod
     def copy(self):
-
+        pass
     @abstractmethod
     def discretize(self, method, *args, **kwargs):
         pass

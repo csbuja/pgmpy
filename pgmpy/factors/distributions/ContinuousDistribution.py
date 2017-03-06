@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from pgmpy.factors.distributions import BaseDistribution
 
 class ContinuousDistribution(BaseDistribution):
-     def __init__(self, variables, distribution, *args, **kwargs):
+    def __init__(self, variables, distribution, *args, **kwargs):
         """
         Class for representing custom continuous distributions.
 
@@ -38,7 +38,7 @@ class ContinuousDistribution(BaseDistribution):
         self.variables = list(variables)
         self._pdf = distribution
 
-	def reduce(self, values, inplace=True):
+    def reduce(self, values, inplace=True):
         """
         Reduces the factor to the context of the given variable values.
 
@@ -185,7 +185,7 @@ class ContinuousDistribution(BaseDistribution):
 
     
     def normalize(self, inplace=True):
-         """
+        """
         Normalizes the pdf of the continuous distribution so that it
         integrates to 1 over all the variables.
 

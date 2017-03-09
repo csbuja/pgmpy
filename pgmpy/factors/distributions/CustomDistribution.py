@@ -1,10 +1,10 @@
-from pgmpy.factors.distributions import BaseDistribution
+from ContinuousDistribution import ContinuousDistribution
 
 import numpy as np
 from scipy import integrate
 
 
-class CustomDistribution(BaseDistribution):
+class CustomDistribution(ContinuousDistribution):
     def __init__(self, variables, distribution, *args, **kwargs):
         """
         Class for representing custom continuous distributions.
@@ -87,6 +87,9 @@ class CustomDistribution(BaseDistribution):
         ['x', 'y']
         """
         return self.variables
+
+    def scope(self):
+        return self.get_scope()
 
     def assignment(self, *args, **kwargs):
         """

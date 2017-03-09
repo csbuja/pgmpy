@@ -1,5 +1,6 @@
-from abc import ABCMeta, abstractmethod, abstractproperty
 from pgmpy.factors.distributions import BaseDistribution
+import numpy as np
+from scipy import integrate
 
 class ContinuousDistribution(BaseDistribution):
     def __init__(self, variables, distribution, *args, **kwargs):
@@ -151,6 +152,9 @@ class ContinuousDistribution(BaseDistribution):
         >>> normal_dist.assignment(1)
         0.24197072451914328
         """
+        if len(variables) == 0:
+            raise ValueError("Shouldn't be calling marginalize over no variable.")
+
         if not isinstance(variables, (list, tuple, np.ndarray)):
             raise TypeError("variables: Expected type iterable, "
                             "got: {var_type}".format(var_type=type(variables)))

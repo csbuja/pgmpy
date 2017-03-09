@@ -10,7 +10,7 @@ from pgmpy.extern import tabulate
 from pgmpy.extern import six
 from pgmpy.extern.six.moves import map, range, reduce, zip
 from pgmpy.utils import StateNameInit, StateNameDecorator
-
+from pgmpy.factors.continuous import ContinuousFactor
 
 State = namedtuple('State', ['var', 'state'])
 
@@ -859,7 +859,7 @@ def factor_product(*args):
             [[10, 30],
              [55, 77]]]])
     """
-    if not all(isinstance(phi, DiscreteFactor) for phi in args):
+    if not all(isinstance(phi, DiscreteFactor) or isinstance(phi, ContinuousFactor)  for phi in args):
         raise TypeError("Arguments must be factors")
     return reduce(lambda phi1, phi2: phi1 * phi2, args)
 
@@ -899,6 +899,6 @@ def factor_divide(phi1, phi2):
             [ 4.        ,  2.25      ],
             [ 5.        ,  2.75      ]]])
     """
-    if not isinstance(phi1, DiscreteFactor) or not isinstance(phi2, DiscreteFactor):
+    if not (isinstance(phi1, DiscreteFactor) or   isinstance(phi2, DiscreteFactor)) or     not( isinstance(phi1, ContinuousFactor)  or isinstance(phi2, ContinuousFactor))   :
         raise TypeError("phi1 and phi2 should be factors instances")
     return phi1.divide(phi2, inplace=False)

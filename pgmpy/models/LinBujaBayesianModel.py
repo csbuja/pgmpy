@@ -82,11 +82,38 @@ class LinBujaBayesianModel(BayesianModel):
         # Send state_names dict from one of the estimated CPDs to the inference class.
         model_inference = VariableElimination(self) #passed in the model
         for index, data_point in data.iterrows():
-            states_dict = model_inference.map_query(variables=missing_variables, evidence=data_point.to_dict())
+            states_dict = model_inference.query(variables=missing_variables, evidence=data_point.to_dict()) #MAP QUERY IS BROKEN FOR CONTINUOUS FACTOR AS IT CALLS NP.ARGMAX
             for k, v in states_dict.items():
                 pred_values[k].append(v) #FIX THIS: only executed once, this is very hacky since k is always equal to zero and we are indexing the default dict
         return pd.DataFrame(pred_values, index=data.index)
+    def check_model(self):
+        """
+        Check the model for various errors. This method checks for the following
+        errors.
 
+        * Checks if the sum of the probabilities for each state is equal to 1 (tol=0.01).
+        * Checks if the CPDs associated with nodes are consistent with their parents.
+
+        Returns
+        -------
+        check: boolean
+            True if all the checks are passed
+        """
+        for node in self.nodes():
+            cpd = self.get_cpds(node=node)
+
+            if isinstance(cpd, TabularCPD) or isinstance(cpd,ContinuousFactor):
+                evidence = cpd.variables[:0:-1]
+                parents = self.get_parents(node)
+                if set(evidence if evidence else []) != set(parents if parents else []):
+                    raise ValueError("CPD associated with %s doesn't have "
+                                     "proper parents associated with it." % node)
+                if not np.allclose(cpd.to_factor().marginalize([node], inplace=False).values.flatten('C'),
+                                   np.ones(np.product(cpd.cardinality[:0:-1])),
+                                   atol=0.01):
+                    raise ValueError('Sum of probabilites of states for node %s'
+                                     ' is not equal to 1.' % node)
+        return True
 
     def add_cpds(self, *cpds):
         """
@@ -110,8 +137,8 @@ class LinBujaBayesianModel(BayesianModel):
         >>> dirichlet_dist = CustomDistribution(variables=['x', 'y'],distribution=dirichlet_pdf)
         >>> dirichlet_factor = ContinuousFactor(['x', 'y'], dirichlet_dist)
         >>> from pgmpy.factors.discrete.CPD import TabularCPD
-        >>> student = BayesianModel([('diff', 'grades'), ('intel', 'grades')])
-        >>> student.add_cpds(grades_cpd)
+        >>> student = BayesianModel([])
+        >>> student.add_cpds(dirichlet_factor)
         """
         for cpd in cpds:
             if not isinstance(cpd, TabularCPD) and not isinstance(cpd,ContinuousFactor):

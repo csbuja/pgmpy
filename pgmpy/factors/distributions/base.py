@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 
 
 class BaseDistribution(object):
-    __metaclass__ = ABCMeta
+    #__metaclass__ = ABCMeta
     # TODO: Fix this
     # @abstractproperty
     # def _pdf(self):
@@ -11,10 +11,6 @@ class BaseDistribution(object):
     # @abstractproperty
     # def variables(self):
     #     pass
-
-    @abstractmethod
-    def __init__(self, variables, *args, **kwargs):
-        pass
 
     @abstractmethod
     def get_pdf(self):

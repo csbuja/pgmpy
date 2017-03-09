@@ -15,7 +15,7 @@ from pgmpy.extern.six.moves import range, zip
 from pgmpy.utils import StateNameInit
 from pgmpy.utils import StateNameDecorator
 
-
+from pgmpy.factors.continuous import ContinuousFactor
 class TabularCPD(DiscreteFactor):
     """
     Defines the conditional probability distribution table (cpd table)
